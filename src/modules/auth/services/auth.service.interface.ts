@@ -1,5 +1,5 @@
 import { LoginRequestDto, RegisterRequestDto } from '../dtos/auth.request.dto';
-import { User } from 'src/modules/user/dtos/user.response.dto';
+import { User } from '../../user/dtos/user.response.dto';
 
 export interface IAuthService {
   /**

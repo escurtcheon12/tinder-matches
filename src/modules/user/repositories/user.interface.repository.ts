@@ -10,6 +10,13 @@ export interface IUserRepository {
 
   /**
    * Description
+   * @param {any} limit:number, page: number, search: string
+   * @returns {any}
+   */
+  findAll(limit: number, page: number, search?: string): Promise<UserEntity[]>;
+
+  /**
+   * Description
    * @param {any} data:UserEntity|UserEntity[]
    * @returns {any}
    */

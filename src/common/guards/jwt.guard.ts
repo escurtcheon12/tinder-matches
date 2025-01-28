@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
+import { Socket } from 'socket.io';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 
@@ -18,9 +19,12 @@ export class JwtGuard implements CanActivate {
     private jwtService: JwtService,
     private configService: ConfigService,
     private reflector: Reflector,
-  ) {}
+  ) {
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const client: Socket = context.switchToWs().getClient<Socket>();
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -42,7 +46,14 @@ export class JwtGuard implements CanActivate {
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       request['user'] = payload;
-    } catch {
+
+      // Attach the decoded user to the client's data object
+      client.data = client.data || {}; // Ensure `data` exists
+      client.data.user = payload;
+
+      // console.log("============", client.data.user, client.data)
+    } catch (err) {
+      console.error(err);
       throw new UnauthorizedException();
     }
     return true;

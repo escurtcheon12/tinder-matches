@@ -7,7 +7,8 @@ export class UserRepository implements IUserRepository {
   constructor(
     @Inject(DataSource)
     private readonly dataSource: DataSource,
-  ) {}
+  ) {
+  }
 
   async findByPhone(
     phone: string,
@@ -31,6 +32,30 @@ export class UserRepository implements IUserRepository {
         .createQueryBuilder('u')
         .where('u.phone = :phone', { phone })
         .getOne();
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
+  async findAll(
+    limit: number,
+    page: number,
+    search?: string,
+    // runner?: Runner,
+  ): Promise<UserEntity[]> {
+
+    const offset = (page - 1) * limit;
+
+    console.log(offset)
+    try {
+      let entityManager = this.dataSource.manager;
+
+      return entityManager
+        .createQueryBuilder()
+        .select('u.*')
+        .from(UserEntity, 'u')
+        .offset(offset)
+        .limit(limit).getRawMany()
     } catch (err) {
       return Promise.reject(err);
     }

@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import config from './config/index';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DBConfig } from './config/db.config';
+import { MatcherModule } from './modules/matcher/matcher.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { DBConfig } from './config/db.config';
       useClass: DBConfig,
     }),
     AuthModule,
+    MatcherModule,
+    UserModule
   ],
 })
 export class AppModule {}

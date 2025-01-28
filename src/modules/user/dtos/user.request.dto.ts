@@ -1,4 +1,5 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { UserConnection } from '../../../common/enums/global';
 
 export class UserLoginRequestDto {
   @IsNotEmpty()
@@ -29,7 +30,7 @@ export class UserRegisterRequestDto {
 
   @IsNotEmpty()
   @IsString()
-  repassword: string;
+  repeat_password: string;
 }
 
 export class FindAllUserRequestDto {
@@ -46,4 +47,26 @@ export class FindAllUserRequestDto {
   @IsOptional()
   @IsString()
   search: string;
+}
+
+export class FindAllByConnectionRequestDto {
+  @IsNotEmpty()
+  @Min(5)
+  @IsInt()
+  limit: number;
+
+  @IsNotEmpty()
+  @Min(1)
+  @IsInt()
+  page: number;
+
+  @IsOptional()
+  @IsString()
+  search: string;
+
+  @IsOptional()
+  @IsEnum(UserConnection, {
+    message: 'User connection status filled with Online = 1 and Offline = 2',
+  })
+  status: number;
 }

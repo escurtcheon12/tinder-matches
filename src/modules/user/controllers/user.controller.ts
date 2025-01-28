@@ -1,59 +1,38 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import {  User } from '../dtos/user.response.dto';
+import {
+  Controller,
+  Get,
+  Inject,
+  Query,
+  Request,
+} from '@nestjs/common';
+import { User } from '../dtos/user.response.dto';
 import { UserService } from '../services/user.service';
-import { FindAllUserRequestDto } from '../dtos/user.request.dto';
+import {
+  FindAllByConnectionRequestDto,
+} from '../dtos/user.request.dto';
 import { ResponseDto } from 'src/common/enums/dto';
+import { IUserService } from '../services/user.service.interface';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(IUserService)
+    private readonly userService: UserService,
+  ) {
+  }
 
   @Get('/')
-  async findAll(@Body() request: FindAllUserRequestDto): Promise<ResponseDto<User & { token: string }>> {
-    return {
-      message: 'success',
-      result: {
-        id: 1,
-        email: 'r',
-        phone: '0',
-        token: '123',
-      },
-    };
-  }
+  async findAllByConnection(
+    @Request() request,
+    @Query() body: FindAllByConnectionRequestDto,
+  ): Promise<ResponseDto<(User & { connection: number })[]>> {
+    const id: number = request.user.id;
 
-  @Get('/:id')
-  async findById(@Param() id): Promise<ResponseDto<User>> {
-    return {
-      message: 'success',
-      result: {
-        id: 1,
-        email: 'r',
-        phone: '0',
-      },
-    };
-  }
+    const result = await this.userService.findAllByConnection(id, body);
 
-  @Post('/create')
-  async create(@Param() id): Promise<ResponseDto<User>> {
     return {
       message: 'success',
-      result: {
-        id: 1,
-        email: 'r',
-        phone: '0',
-      },
-    };
-  }
-
-  @Post('/update/:id')
-  async update(@Body() body, @Param() id): Promise<ResponseDto<User>> {
-    return {
-      message: 'success',
-      result: {
-        id: 1,
-        email: 'r',
-        phone: '0',
-      },
+      result,
     };
   }
 }

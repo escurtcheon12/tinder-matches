@@ -35,4 +35,7 @@ export default () => ({
     database: process.env.DB_NAME,
     entities: [__dirname + '/../**/entities/*.entity{.ts,.js}'],
   },
+  session: {
+    secret: process.env.SESSION_SECRET,
+  }
 });
